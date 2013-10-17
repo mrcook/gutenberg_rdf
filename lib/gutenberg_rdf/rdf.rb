@@ -18,6 +18,10 @@ module GutenbergRdf
       titles[1..-1].join(' - ')
     end
 
+    def authors
+      @authors ||= extract_authors
+    end
+
   private
 
     def titles
@@ -33,6 +37,14 @@ module GutenbergRdf
       title_array = title_array.first.split(/;/) if title_array.count == 1
 
       title_array.each(&:strip!)
+    end
+
+    def extract_authors
+      entries = Array.new
+      xml.xpath('//pgterms:agent').each do |agent|
+        entries << Agent.new(agent)
+      end
+      entries
     end
 
   end

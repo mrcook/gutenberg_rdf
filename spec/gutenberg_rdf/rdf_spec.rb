@@ -101,5 +101,33 @@ module GutenbergRdf
       end
     end
 
+    describe "#authors" do
+      let(:xml) do
+        '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+          <pgterms:agent rdf:about="2009/agents/402">
+            <pgterms:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1830</pgterms:birthdate>
+            <pgterms:deathdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1905</pgterms:deathdate>
+            <pgterms:name>Dodge, Mary Mapes</pgterms:name>
+            <pgterms:alias>Dodge, Mary</pgterms:alias>
+            <pgterms:webpage rdf:resource="http://en.wikipedia.org/wiki/Mary_Mapes_Dodge"/>
+          </pgterms:agent>
+          <pgterms:agent rdf:about="2009/agents/116">
+            <pgterms:alias>Verschillende</pgterms:alias>
+            <pgterms:name>Various</pgterms:name>
+          </pgterms:agent>
+        </rdf:RDF>'
+      end
+      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+      it "expects a Array" do
+        expect(rdf.authors.class).to be Array
+      end
+      it "expects correct number to be returned" do
+        expect(rdf.authors.count).to be 2
+      end
+      it "expects an author object" do
+        expect(rdf.authors.first.class).to be Rdf::Agent
+      end
+    end
+
   end
 end
