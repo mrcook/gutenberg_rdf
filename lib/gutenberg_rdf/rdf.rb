@@ -12,6 +12,10 @@ module GutenbergRdf
       xml.at_xpath('pgterms:ebook').attribute('about').content.match(/\Aebooks\/(.+)\z/)[1]
     end
 
+    def type
+      xml.at_xpath('pgterms:ebook/dcterms:type/rdf:Description/rdf:value').text
+    end
+
     def title
       titles.first
     end

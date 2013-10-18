@@ -30,6 +30,26 @@ module GutenbergRdf
       expect(rdf.rights).to eql "Public domain in the USA."
     end
 
+    describe "#type" do
+      let(:xml) do
+        '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+           <pgterms:ebook rdf:about="ebooks/98765">
+             <dcterms:type>
+               <rdf:Description>
+                 <dcam:memberOf rdf:resource="http://purl.org/dc/terms/DCMIType"/>
+                 <rdf:value>Text</rdf:value>
+               </rdf:Description>
+             </dcterms:type>
+           </pgterms:ebook>
+         </rdf:RDF>'
+      end
+      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+
+      it "expect the type of entity" do
+        expect(rdf.type).to eql 'Text'
+      end
+    end
+
     describe "Titles" do
       let(:xml) do
         '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
