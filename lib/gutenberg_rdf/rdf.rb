@@ -1,3 +1,5 @@
+require 'date'
+
 module GutenbergRdf
   class Rdf
     attr_reader :xml
@@ -53,6 +55,17 @@ module GutenbergRdf
       official_cover_images.concat(other_cover_images).sort.uniq
     end
 
+    def ebooks
+      files = Array.new
+      xml.xpath('//pgterms:file').each do |file|
+        uri = file.attribute('about').content
+        datatypes = separate_mimetype_and_encoding(file.at_xpath('dcterms:format/rdf:Description/rdf:value').text)
+        modified = DateTime.parse(file.at_xpath('dcterms:modified').text + '-07:00')
+        files << {uri: uri, mime_type: datatypes[:mimetype], encoding: datatypes[:encoding], modified: modified}
+      end
+      files
+    end
+
   private
 
     def titles
@@ -95,6 +108,13 @@ module GutenbergRdf
         entries << cover
       end
       entries
+    end
+
+    def separate_mimetype_and_encoding(string)
+      parts = string.split(/; */)
+      m = parts.shift
+      e = parts.join(';').sub('charset=', '')
+      {mimetype: m, encoding: e}
     end
 
   end

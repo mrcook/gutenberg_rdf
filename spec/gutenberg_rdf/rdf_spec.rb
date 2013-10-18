@@ -4,7 +4,7 @@ module GutenbergRdf
   describe Rdf do
     let(:xml) do
       '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-           <pgterms:ebook rdf:about="ebooks/19399">
+           <pgterms:ebook rdf:about="ebooks/98765">
              <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-09-28</dcterms:issued>
              <dcterms:language rdf:datatype="http://purl.org/dc/terms/RFC4646">en</dcterms:language>
              <dcterms:publisher>Project Gutenberg</dcterms:publisher>
@@ -15,7 +15,7 @@ module GutenbergRdf
     let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
 
     it "expects an id" do
-      expect(rdf.id).to eql "19399"
+      expect(rdf.id).to eql "98765"
     end
     it "expects a published date" do
       expect(rdf.published).to eql "2006-09-28"
@@ -33,7 +33,7 @@ module GutenbergRdf
     describe "Titles" do
       let(:xml) do
         '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-           <pgterms:ebook rdf:about="ebooks/19399">
+           <pgterms:ebook rdf:about="ebooks/98765">
              <dcterms:title>A Great Title</dcterms:title>
            </pgterms:ebook>
          </rdf:RDF>'
@@ -50,7 +50,7 @@ module GutenbergRdf
       context "with a title and subtitle, on separate lines" do
         let(:xml) do
           '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <pgterms:ebook rdf:about="ebooks/19399">
+            <pgterms:ebook rdf:about="ebooks/98765">
               <dcterms:title>A Great Multi-Title
                 Or, a Subtitle</dcterms:title>
             </pgterms:ebook>
@@ -69,7 +69,7 @@ module GutenbergRdf
       context "when title:subtitle are separated by a colon" do
         let(:xml) do
           '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <pgterms:ebook rdf:about="ebooks/19399">
+            <pgterms:ebook rdf:about="ebooks/98765">
               <dcterms:title>A Great Multi-Title: And a Subtitle</dcterms:title>
             </pgterms:ebook>
           </rdf:RDF>'
@@ -87,7 +87,7 @@ module GutenbergRdf
       context "when title; and subtitle are separated by a semi-colon" do
         let(:xml) do
           '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <pgterms:ebook rdf:about="ebooks/19399">
+            <pgterms:ebook rdf:about="ebooks/98765">
               <dcterms:title>A Great Multi-Title; Or, a Subtitle</dcterms:title>
             </pgterms:ebook>
           </rdf:RDF>'
@@ -103,7 +103,7 @@ module GutenbergRdf
         context "...except when subtitles already exists" do
           let(:xml) do
             '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <pgterms:ebook rdf:about="ebooks/19399">
+            <pgterms:ebook rdf:about="ebooks/98765">
               <dcterms:title>A Great Multi-Title; and some other text
                 Then a Subtitle on a newline</dcterms:title>
             </pgterms:ebook>
@@ -151,7 +151,7 @@ module GutenbergRdf
     describe "#subjects" do
       let(:xml) do
         %q{<rdf:RDF xmlns:dcam="http://purl.org/dc/dcam/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-           <pgterms:ebook rdf:about="ebooks/19399">
+           <pgterms:ebook rdf:about="ebooks/98765">
              <dcterms:subject>
                <rdf:Description>
                  <dcam:memberOf rdf:resource="http://purl.org/dc/terms/LCSH"/>
@@ -258,6 +258,94 @@ module GutenbergRdf
         it "expects the covers to be listed in the correct order" do
           expect(rdf.covers[0]).to eql 'http://www.gutenberg.org/files/12345/12345-h/images/cover.jpg'
           expect(rdf.covers[1]).to eql 'http://www.gutenberg.org/files/12345/12345-rst/images/cover.jpg'
+        end
+      end
+    end
+
+    describe "#ebook" do
+      let(:xml) do
+        '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+          <pgterms:ebook rdf:about="ebooks/98765">
+            <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/98765.txt.utf-8"/>
+            <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/98765.zip"/>
+          </pgterms:ebook>
+          <pgterms:file rdf:about="http://www.gutenberg.org/ebooks/98765.txt.utf-8">
+            <dcterms:extent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">293684</dcterms:extent>
+            <dcterms:format>
+              <rdf:Description>
+                <dcam:memberOf rdf:resource="http://purl.org/dc/terms/IMT"/>
+                <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">text/plain; charset=utf-8</rdf:value>
+              </rdf:Description>
+            </dcterms:format>
+            <dcterms:isFormatOf rdf:resource="ebooks/98765"/>
+            <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2010-02-16T08:29:52.373092</dcterms:modified>
+          </pgterms:file>
+          <pgterms:file rdf:about="http://www.gutenberg.org/files/98765/98765.zip">
+            <dcterms:extent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">116685</dcterms:extent>
+            <dcterms:format>
+              <rdf:Description>
+                <dcam:memberOf rdf:resource="http://purl.org/dc/terms/IMT"/>
+                <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">application/zip</rdf:value>
+                <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">text/plain; charset=us-ascii</rdf:value>
+              </rdf:Description>
+            </dcterms:format>
+            <dcterms:isFormatOf rdf:resource="ebooks/98765"/>
+            <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2006-09-28T12:37:26</dcterms:modified>
+          </pgterms:file>
+        </rdf:RDF>'
+      end
+      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+
+      it "expects the correct number of entries" do
+        expect(rdf.ebooks.count).to be 2
+      end
+      it "expects an entry Hash to have the correct keys" do
+        expect(rdf.ebooks.first).to have_key :uri
+        expect(rdf.ebooks.first).to have_key :mime_type
+        expect(rdf.ebooks.first).to have_key :encoding
+        expect(rdf.ebooks.first).to have_key :modified
+      end
+      it "expcts the modified value to be a DateTime" do
+        expect(rdf.ebooks.first[:modified].class).to be DateTime
+      end
+
+      it "should return the URL" do
+        expect(rdf.ebooks.first[:uri]).to eql 'http://www.gutenberg.org/ebooks/98765.txt.utf-8'
+      end
+      it "should return the mime_type" do
+        expect(rdf.ebooks.first[:mime_type]).to eql 'text/plain'
+      end
+      it "should return the encoding" do
+        expect(rdf.ebooks.first[:encoding]).to eql 'utf-8'
+      end
+      it "should return the modified datetime" do
+        expect(rdf.ebooks.first[:modified].to_s).to eql '2010-02-16T08:29:52-07:00'
+      end
+
+      context "when there are two mime-types" do
+        let(:xml) do
+          '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+             <pgterms:file rdf:about="http://www.gutenberg.org/files/98765/98765.zip">
+               <dcterms:extent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">116685</dcterms:extent>
+               <dcterms:format>
+                 <rdf:Description>
+                   <dcam:memberOf rdf:resource="http://purl.org/dc/terms/IMT"/>
+                   <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">application/zip</rdf:value>
+                   <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">text/plain; charset=us-ascii</rdf:value>
+                 </rdf:Description>
+               </dcterms:format>
+               <dcterms:isFormatOf rdf:resource="ebooks/98765"/>
+               <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2006-09-28T12:37:26</dcterms:modified>
+             </pgterms:file>
+          </rdf:RDF>'
+        end
+        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+
+        it "should use just the first one" do
+          expect(rdf.ebooks.first[:mime_type]).to eql 'application/zip'
+        end
+        it "expects the encoding to be an empty string" do
+          expect(rdf.ebooks.first[:encoding]).to eql ''
         end
       end
     end
