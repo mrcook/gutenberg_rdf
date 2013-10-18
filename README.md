@@ -27,8 +27,7 @@ Or install it yourself as:
 
     require 'gutenberg_rdf'
 
-    xml = Nokogiri::XML(File.new('/path/to/pg2746.rdf'))
-    book = GutenbergRdf::Rdf.new(xml)
+    book = GutenbergRdf.parse('/path/to/pg2746.rdf')
 
     puts book.id
     #=> "2746"
