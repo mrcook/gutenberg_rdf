@@ -46,7 +46,7 @@ module GutenbergRdf
     private
 
       def name_parts
-        parts = xml.at_xpath('pgterms:agent/pgterms:name').text.split(/, */)
+        parts = xml.xpath('//pgterms:name').text.split(/, */)
         last  = parts.shift
         first = parts.reverse.join(' ')
 
