@@ -53,18 +53,6 @@ module GutenbergRdf
         {first: first, last: last}
       end
 
-      # def clean_up_split_names(names)
-      #   names.map! do |name|
-      #     n = name.sub(/\(.*?\)/, '')
-      #     n.strip
-      #   end
-
-      #   names.delete 'Sir'
-      #   names.delete 'Graf'
-      #   names.delete 'graf'
-      #   names
-      # end
-
     end
   end
 end
