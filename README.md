@@ -1,6 +1,13 @@
-# GutenbergRdf
+# Gutenberg RDF
 
-Read and parse a Project Gutenberg book RDF file and provide a nice API for use in any Ruby project.
+Gutenberg RDF is a Ruby wrapper for the Project Gutenberg RDF catalog book files,
+providing a nice API to all the metadata contained within.
+
+## Requirements
+
+*  Ruby 2.0 - this is so we get UTF-8 by default
+*  Nokogiri - for parsing the RDF
+
 
 ## Installation
 
@@ -18,7 +25,47 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    require 'gutenberg_rdf'
+
+    xml = Nokogiri::XML(File.new('/path/to/pg2746.rdf'))
+    book = GutenbergRdf::Rdf.new(xml)
+
+    puts book.id
+    #=> "2746"
+
+    puts book.type
+    #=> "Text"
+
+    puts book.title
+    #=> "Urbain Grandier"
+
+    puts book.subtitle
+    #=> "Celebrated Crimes"
+
+    puts book.authors.first.fullname
+    #=> "Alexandre Dumas"
+
+    puts book.subjects.first
+    #=> "Crime"
+
+    puts book.published
+    #=> "2004-09-22"
+
+    puts book.publisher
+    #=> "Project Gutenberg"
+
+    puts book.rights
+    #=> "Public domain in the USA."
+
+    puts book.language
+    #=> "en"
+
+    puts book.covers.first
+    #=> "http://www.gutenberg.org/ebooks/2746.cover.medium"
+
+    puts book.ebooks[3][:uri]
+    #=> "http://www.gutenberg.org/ebooks/2746.epub.images"
+
 
 ## Contributing
 

@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.0.0" # depending on UTF-8 by default
+  spec.required_ruby_version = ">= 2.0.0" # so we have UTF-8 by default
 
   spec.add_dependency "nokogiri", "~> 1.6.0"
 
