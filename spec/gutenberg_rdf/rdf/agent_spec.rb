@@ -99,7 +99,7 @@ module GutenbergRdf
         end
 
         it "expects initials to replaced by name in brackets" do
-          pending "this functionality needs implementing"
+          pending "Not yet implemented"
           expect(agent.firstname).to eql 'Jon James'
           expect(agent.lastname).to eql 'Doe'
         end
