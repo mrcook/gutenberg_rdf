@@ -178,5 +178,89 @@ module GutenbergRdf
       end
     end
 
+    describe "#covers" do
+      describe "official PG covers" do
+        let(:xml) do
+          '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+             <pgterms:ebook rdf:about="ebooks/12345">
+               <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/12345.epub.noimages"/>
+               <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/12345.cover.medium"/>
+               <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/12345.cover.small"/>
+               <pgterms:marc901>http://www.gutenberg.org/files/12345/12345-h/images/cover.jpg</pgterms:marc901>
+             </pgterms:ebook>
+             <pgterms:file rdf:about="http://www.gutenberg.org/ebooks/12345.epub.noimages">
+               <dcterms:extent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">92652</dcterms:extent>
+               <dcterms:format>
+                 <rdf:Description>
+                   <dcam:memberOf rdf:resource="http://purl.org/dc/terms/IMT"/>
+                   <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">application/epub+zip</rdf:value>
+                 </rdf:Description>
+               </dcterms:format>
+               <dcterms:isFormatOf rdf:resource="ebooks/12345"/>
+               <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2013-09-21T19:22:32.115259</dcterms:modified>
+             </pgterms:file>
+             <pgterms:file rdf:about="http://www.gutenberg.org/ebooks/12345.cover.medium">
+               <dcterms:extent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10856</dcterms:extent>
+               <dcterms:format>
+                 <rdf:Description>
+                   <dcam:memberOf rdf:resource="http://purl.org/dc/terms/IMT"/>
+                   <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">image/jpeg</rdf:value>
+                 </rdf:Description>
+               </dcterms:format>
+               <dcterms:isFormatOf rdf:resource="ebooks/12345"/>
+               <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2013-09-21T19:22:34.484114</dcterms:modified>
+             </pgterms:file>
+             <pgterms:file rdf:about="http://www.gutenberg.org/ebooks/12345.cover.small">
+               <dcterms:extent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1904</dcterms:extent>
+               <dcterms:format>
+                 <rdf:Description>
+                   <dcam:memberOf rdf:resource="http://purl.org/dc/terms/IMT"/>
+                   <rdf:value rdf:datatype="http://purl.org/dc/terms/IMT">image/jpeg</rdf:value>
+                 </rdf:Description>
+               </dcterms:format>
+               <dcterms:isFormatOf rdf:resource="ebooks/12345"/>
+               <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2013-09-21T19:22:34.379124</dcterms:modified>
+             </pgterms:file>
+           </rdf:RDF>'
+        end
+        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+
+        it "expects the correct number of entries returned" do
+          expect(rdf.covers.count).to be 3
+        end
+        it "expects those to be used" do
+          expect(rdf.covers[0]).to eql 'http://www.gutenberg.org/ebooks/12345.cover.medium'
+          expect(rdf.covers[1]).to eql 'http://www.gutenberg.org/ebooks/12345.cover.small'
+        end
+        it "expects any other images to be listed after the official ones" do
+          expect(rdf.covers[2]).to eql 'http://www.gutenberg.org/files/12345/12345-h/images/cover.jpg'
+        end
+      end
+
+      describe "HTML ebook cover image" do
+        let(:xml) do
+          '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+             <pgterms:ebook rdf:about="ebooks/12345">
+               <pgterms:marc901>file:///public/vhost/g/gutenberg/html/files/12345/12345-rst/images/cover.jpg</pgterms:marc901>
+               <pgterms:marc901>file:///public/vhost/g/gutenberg/html/files/12345/12345-h/images/cover.jpg</pgterms:marc901>
+               <pgterms:marc901>http://www.gutenberg.org/files/12345/12345-h/images/cover.jpg</pgterms:marc901>
+             </pgterms:ebook>
+           </rdf:RDF>'
+        end
+        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+
+        it "expects only unique entries" do
+          expect(rdf.covers.count).to be 2
+        end
+        it "should convert File URIs to the Gutenberg URL" do
+          expect(rdf.covers.first).to match 'http://www.gutenberg.org'
+        end
+        it "expects the covers to be listed in the correct order" do
+          expect(rdf.covers[0]).to eql 'http://www.gutenberg.org/files/12345/12345-h/images/cover.jpg'
+          expect(rdf.covers[1]).to eql 'http://www.gutenberg.org/files/12345/12345-rst/images/cover.jpg'
+        end
+      end
+    end
+
   end
 end

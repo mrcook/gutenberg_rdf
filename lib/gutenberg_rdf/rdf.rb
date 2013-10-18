@@ -49,6 +49,10 @@ module GutenbergRdf
       xml.at_xpath('pgterms:ebook/dcterms:rights').text
     end
 
+    def covers
+      official_cover_images.concat(other_cover_images).sort.uniq
+    end
+
   private
 
     def titles
@@ -70,6 +74,25 @@ module GutenbergRdf
       entries = Array.new
       xml.xpath('//pgterms:agent').each do |agent|
         entries << Agent.new(agent)
+      end
+      entries
+    end
+
+    def official_cover_images
+      entries = Array.new
+      xml.xpath('//pgterms:file').each do |file|
+        url = file.attribute('about').content
+        entries << url if file.xpath('dcterms:format/rdf:Description//rdf:value').detect { |v| v.text.match(/image/) }
+      end
+      entries
+    end
+
+    def other_cover_images
+      entries = Array.new
+      xml.xpath('pgterms:ebook//pgterms:marc901').each do |node|
+        cover = node.text
+        cover.sub!(/\Afile:\/\/\/public\/vhost\/g\/gutenberg\/html/, 'http://www.gutenberg.org')
+        entries << cover
       end
       entries
     end
