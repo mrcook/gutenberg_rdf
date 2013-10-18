@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Michael R. Cook"]
   spec.email         = ["git@mrcook.uk"]
   spec.summary       = %q{A Ruby wrapper for the Project Gutenberg RDF catalog files.}
-  spec.description   = %q{GutenbergRdf provides a useful API to the metadata found in any Project Gutenberg book RDF}
-  spec.summary       = %q{API for any Project Gutenberg book RDF}
+  spec.description   = %q{A Ruby wrapper for the Project Gutenberg RDF catalog files (requires Ruby 2).}
+  spec.homepage      = "https://github.com/mrcook/gutenberg_rdf"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
