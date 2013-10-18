@@ -2,13 +2,32 @@ require 'spec_helper'
 
 module GutenbergRdf
   describe Rdf do
+    let(:xml) do
+      '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+           <pgterms:ebook rdf:about="ebooks/19399">
+             <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-09-28</dcterms:issued>
+             <dcterms:language rdf:datatype="http://purl.org/dc/terms/RFC4646">en</dcterms:language>
+             <dcterms:publisher>Project Gutenberg</dcterms:publisher>
+             <dcterms:rights>Public domain in the USA.</dcterms:rights>
+           </pgterms:ebook>
+       </rdf:RDF>'
+    end
+    let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+
     it "expects an id" do
-      xml = '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-               <pgterms:ebook rdf:about="ebooks/19399">
-                 </pgterms:ebook>
-             </rdf:RDF>'
-      rdf = Rdf.new(Nokogiri::XML(xml))
       expect(rdf.id).to eql "19399"
+    end
+    it "expects a published date" do
+      expect(rdf.published).to eql "2006-09-28"
+    end
+    it "expects a publisher" do
+      expect(rdf.publisher).to eql "Project Gutenberg"
+    end
+    it "expects a language" do
+      expect(rdf.language).to eql "en"
+    end
+    it "expects the rights" do
+      expect(rdf.rights).to eql "Public domain in the USA."
     end
 
     describe "Titles" do
@@ -19,12 +38,12 @@ module GutenbergRdf
            </pgterms:ebook>
          </rdf:RDF>'
       end
+      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+
       it "expects a title" do
-        rdf = Rdf.new(Nokogiri::XML(xml))
         expect(rdf.title).to eql 'A Great Title'
       end
       it "expects subtitle to be empty" do
-        rdf = Rdf.new(Nokogiri::XML(xml))
         expect(rdf.subtitle).to eql ''
       end
 
@@ -126,6 +145,36 @@ module GutenbergRdf
       end
       it "expects an author object" do
         expect(rdf.authors.first.class).to be Rdf::Agent
+      end
+    end
+
+    describe "#subjects" do
+      let(:xml) do
+        %q{<rdf:RDF xmlns:dcam="http://purl.org/dc/dcam/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+           <pgterms:ebook rdf:about="ebooks/19399">
+             <dcterms:subject>
+               <rdf:Description>
+                 <dcam:memberOf rdf:resource="http://purl.org/dc/terms/LCSH"/>
+                 <rdf:value>Children's literature -- Periodicals</rdf:value>
+                 <rdf:value>Children's periodicals, American</rdf:value>
+               </rdf:Description>
+             </dcterms:subject>
+             <dcterms:subject>
+               <rdf:Description>
+                 <dcam:memberOf rdf:resource="http://purl.org/dc/terms/LCC"/>
+                 <rdf:value>PZ</rdf:value>
+               </rdf:Description>
+             </dcterms:subject>
+           </pgterms:ebook>
+        </rdf:RDF>}
+      end
+      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+      it "expects correct number to be returned" do
+        expect(rdf.subjects.count).to be 2
+      end
+      it "expects the correct data" do
+        expect(rdf.subjects.first).to eql "Children's literature -- Periodicals"
+        expect(rdf.subjects.last).to eql "Children's periodicals, American"
       end
     end
 

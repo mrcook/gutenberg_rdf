@@ -22,6 +22,33 @@ module GutenbergRdf
       @authors ||= extract_authors
     end
 
+    def subjects
+      entries = Array.new
+      xml.xpath('pgterms:ebook//dcterms:subject').each do |entry|
+        next unless entry.at_xpath('rdf:Description/dcam:memberOf').attribute('resource').text.match(/LCSH\z/)
+        entry.xpath('rdf:Description//rdf:value').each do |value|
+          entries << value.text
+        end
+      end
+      entries
+    end
+
+    def published
+      xml.at_xpath('pgterms:ebook/dcterms:issued').text
+    end
+
+    def publisher
+      xml.at_xpath('pgterms:ebook/dcterms:publisher').text
+    end
+
+    def language
+      xml.at_xpath('pgterms:ebook/dcterms:language').text
+    end
+
+    def rights
+      xml.at_xpath('pgterms:ebook/dcterms:rights').text
+    end
+
   private
 
     def titles
