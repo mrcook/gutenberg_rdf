@@ -64,7 +64,7 @@ Or install it yourself as:
     puts book.ebooks[1].uri
     #=> "http://www.gutenberg.org/files/2746/2746-h/2746-h.htm"
 
-    puts book.ebooks[1].mime_type
+    puts book.ebooks[1].media_type
     #=> "text/html"
 
     puts book.ebooks[1].encoding
