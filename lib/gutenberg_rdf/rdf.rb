@@ -62,10 +62,7 @@ module GutenbergRdf
     def ebooks
       files = Array.new
       xml.elements.each('pgterms:file') do |file|
-        uri = file.attributes['about']
-        datatypes = separate_mimetype_and_encoding(file.elements['dcterms:format/rdf:Description/rdf:value'].text)
-        modified = DateTime.parse(file.elements['dcterms:modified'].text + '-07:00')
-        files << {uri: uri, mime_type: datatypes[:mimetype], encoding: datatypes[:encoding], modified: modified}
+        files << Media.new(file)
       end
       files
     end
@@ -118,13 +115,6 @@ module GutenbergRdf
         entries << cover
       end
       entries
-    end
-
-    def separate_mimetype_and_encoding(string)
-      parts = string.split(/; */)
-      m = parts.shift
-      e = parts.join(';').sub('charset=', '')
-      {mimetype: m, encoding: e}
     end
 
   end

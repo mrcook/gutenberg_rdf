@@ -2,6 +2,7 @@ require 'rexml/document'
 
 require "gutenberg_rdf/rdf"
 require "gutenberg_rdf/rdf/agent"
+require "gutenberg_rdf/rdf/media"
 require "gutenberg_rdf/version"
 
 module GutenbergRdf
