@@ -5,15 +5,15 @@ module GutenbergRdf
     attr_reader :xml
 
     def initialize(xml)
-      @xml = xml.at_xpath('rdf:RDF')
+      @xml = xml.root
     end
 
     def id
-      xml.at_xpath('pgterms:ebook').attribute('about').content.match(/\Aebooks\/(.+)\z/)[1]
+      xml.elements['pgterms:ebook'].attributes['about'].match(/\Aebooks\/(.+)\z/)[1]
     end
 
     def type
-      xml.at_xpath('pgterms:ebook/dcterms:type/rdf:Description/rdf:value').text
+      xml.elements['pgterms:ebook/dcterms:type/rdf:Description/rdf:value'].text
     end
 
     def title
@@ -30,9 +30,9 @@ module GutenbergRdf
 
     def subjects
       entries = Array.new
-      xml.xpath('pgterms:ebook//dcterms:subject').each do |entry|
-        next unless entry.at_xpath('rdf:Description/dcam:memberOf').attribute('resource').text.match(/LCSH\z/)
-        entry.xpath('rdf:Description//rdf:value').each do |value|
+      xml.elements.each('pgterms:ebook/dcterms:subject') do |entry|
+        next unless entry.elements['rdf:Description/dcam:memberOf'].attributes['resource'].match(/LCSH\z/)
+        entry.elements.each('rdf:Description//rdf:value') do |value|
           entries << value.text
         end
       end
@@ -40,19 +40,19 @@ module GutenbergRdf
     end
 
     def published
-      xml.at_xpath('pgterms:ebook/dcterms:issued').text
+      xml.elements['pgterms:ebook/dcterms:issued'].text
     end
 
     def publisher
-      xml.at_xpath('pgterms:ebook/dcterms:publisher').text
+      xml.elements['pgterms:ebook/dcterms:publisher'].text
     end
 
     def language
-      xml.at_xpath('pgterms:ebook/dcterms:language').text
+      xml.elements['pgterms:ebook/dcterms:language'].text
     end
 
     def rights
-      xml.at_xpath('pgterms:ebook/dcterms:rights').text
+      xml.elements['pgterms:ebook/dcterms:rights'].text
     end
 
     def covers
@@ -61,10 +61,10 @@ module GutenbergRdf
 
     def ebooks
       files = Array.new
-      xml.xpath('//pgterms:file').each do |file|
-        uri = file.attribute('about').content
-        datatypes = separate_mimetype_and_encoding(file.at_xpath('dcterms:format/rdf:Description/rdf:value').text)
-        modified = DateTime.parse(file.at_xpath('dcterms:modified').text + '-07:00')
+      xml.elements.each('pgterms:file') do |file|
+        uri = file.attributes['about']
+        datatypes = separate_mimetype_and_encoding(file.elements['dcterms:format/rdf:Description/rdf:value'].text)
+        modified = DateTime.parse(file.elements['dcterms:modified'].text + '-07:00')
         files << {uri: uri, mime_type: datatypes[:mimetype], encoding: datatypes[:encoding], modified: modified}
       end
       files
@@ -77,8 +77,8 @@ module GutenbergRdf
     end
 
     def split_title_and_subtitle
-      # Note this gsub is replacing UTF-8 hyphens with normal ASCII ones
-      t = xml.at_xpath('pgterms:ebook/dcterms:title').text.gsub(/—/, '-')
+      # NOTE: this gsub is replacing UTF-8 hyphens with normal ASCII ones
+      t = xml.elements['pgterms:ebook/dcterms:title'].text.gsub(/—/, '-')
 
       title_array = t.split(/\n/)
       title_array = title_array.first.split(/:/) if title_array.count == 1
@@ -89,24 +89,30 @@ module GutenbergRdf
 
     def extract_authors
       entries = Array.new
-      xml.xpath('//pgterms:agent').each do |agent|
-        entries << Agent.new(agent)
+      xml.elements.each('pgterms:agent') do |agent|
+        entries << Agent.new(agent.root)
       end
       entries
     end
 
     def official_cover_images
       entries = Array.new
-      xml.xpath('//pgterms:file').each do |file|
-        url = file.attribute('about').content
-        entries << url if file.xpath('dcterms:format/rdf:Description//rdf:value').detect { |v| v.text.match(/image/) }
+      xml.elements.each('pgterms:file') do |file|
+        entries << file.attributes['about'] if file_is_image?(file)
       end
       entries
     end
 
+    def file_is_image?(node)
+      node.elements.each('dcterms:format/rdf:Description/rdf:value') do |value|
+        return true if value.text.match(/image/)
+      end
+      false
+    end
+
     def other_cover_images
       entries = Array.new
-      xml.xpath('pgterms:ebook//pgterms:marc901').each do |node|
+      xml.elements.each('pgterms:ebook/pgterms:marc901') do |node|
         cover = node.text
         cover.sub!(/\Afile:\/\/\/public\/vhost\/g\/gutenberg\/html/, 'http://www.gutenberg.org')
         entries << cover

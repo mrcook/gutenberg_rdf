@@ -6,7 +6,6 @@ providing a nice API to all the metadata contained within.
 ## Requirements
 
 *  Ruby 2.0 - this is so we get UTF-8 by default
-*  Nokogiri - for parsing the RDF
 
 
 ## Installation

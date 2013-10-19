@@ -12,7 +12,7 @@ module GutenbergRdf
            </pgterms:ebook>
        </rdf:RDF>'
     end
-    let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+    let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
     it "expects an id" do
       expect(rdf.id).to eql "98765"
@@ -32,7 +32,7 @@ module GutenbergRdf
 
     describe "#type" do
       let(:xml) do
-        '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        '<rdf:RDF xmlns:dcam="http://purl.org/dc/dcam/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
            <pgterms:ebook rdf:about="ebooks/98765">
              <dcterms:type>
                <rdf:Description>
@@ -43,7 +43,7 @@ module GutenbergRdf
            </pgterms:ebook>
          </rdf:RDF>'
       end
-      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+      let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
       it "expect the type of entity" do
         expect(rdf.type).to eql 'Text'
@@ -58,7 +58,7 @@ module GutenbergRdf
            </pgterms:ebook>
          </rdf:RDF>'
       end
-      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+      let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
       it "expects a title" do
         expect(rdf.title).to eql 'A Great Title'
@@ -76,7 +76,7 @@ module GutenbergRdf
             </pgterms:ebook>
           </rdf:RDF>'
         end
-        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+        let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
         it "expects the title to be the first line" do
           expect(rdf.title).to eql 'A Great Multi-Title'
@@ -94,7 +94,7 @@ module GutenbergRdf
             </pgterms:ebook>
           </rdf:RDF>'
         end
-        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+        let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
         it "expects a title" do
           expect(rdf.title).to eql 'A Great Multi-Title'
@@ -112,7 +112,7 @@ module GutenbergRdf
             </pgterms:ebook>
           </rdf:RDF>'
         end
-        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+        let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
         it "expects a title" do
           expect(rdf.title).to eql 'A Great Multi-Title'
         end
@@ -129,7 +129,7 @@ module GutenbergRdf
             </pgterms:ebook>
           </rdf:RDF>'
           end
-          let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+          let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
           it "expects a title" do
             expect(rdf.title).to eql 'A Great Multi-Title; and some other text'
           end
@@ -156,7 +156,8 @@ module GutenbergRdf
           </pgterms:agent>
         </rdf:RDF>'
       end
-      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+      let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
+
       it "expects a Array" do
         expect(rdf.authors.class).to be Array
       end
@@ -188,7 +189,7 @@ module GutenbergRdf
            </pgterms:ebook>
         </rdf:RDF>}
       end
-      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+      let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
       it "expects correct number to be returned" do
         expect(rdf.subjects.count).to be 2
       end
@@ -201,7 +202,7 @@ module GutenbergRdf
     describe "#covers" do
       describe "official PG covers" do
         let(:xml) do
-          '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+          '<rdf:RDF xmlns:dcam="http://purl.org/dc/dcam/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
              <pgterms:ebook rdf:about="ebooks/12345">
                <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/12345.epub.noimages"/>
                <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/12345.cover.medium"/>
@@ -243,7 +244,7 @@ module GutenbergRdf
              </pgterms:file>
            </rdf:RDF>'
         end
-        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+        let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
         it "expects the correct number of entries returned" do
           expect(rdf.covers.count).to be 3
@@ -267,7 +268,7 @@ module GutenbergRdf
              </pgterms:ebook>
            </rdf:RDF>'
         end
-        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+        let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
         it "expects only unique entries" do
           expect(rdf.covers.count).to be 2
@@ -284,7 +285,7 @@ module GutenbergRdf
 
     describe "#ebook" do
       let(:xml) do
-        '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        '<rdf:RDF xmlns:dcam="http://purl.org/dc/dcam/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
           <pgterms:ebook rdf:about="ebooks/98765">
             <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/98765.txt.utf-8"/>
             <dcterms:hasFormat rdf:resource="http://www.gutenberg.org/ebooks/98765.zip"/>
@@ -314,7 +315,7 @@ module GutenbergRdf
           </pgterms:file>
         </rdf:RDF>'
       end
-      let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+      let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
       it "expects the correct number of entries" do
         expect(rdf.ebooks.count).to be 2
@@ -344,7 +345,7 @@ module GutenbergRdf
 
       context "when there are two mime-types" do
         let(:xml) do
-          '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+          '<rdf:RDF xmlns:dcam="http://purl.org/dc/dcam/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
              <pgterms:file rdf:about="http://www.gutenberg.org/files/98765/98765.zip">
                <dcterms:extent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">116685</dcterms:extent>
                <dcterms:format>
@@ -359,7 +360,7 @@ module GutenbergRdf
              </pgterms:file>
           </rdf:RDF>'
         end
-        let(:rdf) { Rdf.new(Nokogiri::XML(xml)) }
+        let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
         it "should use just the first one" do
           expect(rdf.ebooks.first[:mime_type]).to eql 'application/zip'
