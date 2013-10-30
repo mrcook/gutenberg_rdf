@@ -34,6 +34,10 @@ module GutenbergRdf
         expect(agent.fullname).to eql 'Jon James Doe'
       end
 
+      it "returns the #fullname when to_s is called" do
+        expect(agent.to_s).to eql 'Jon James Doe'
+      end
+
       it "expects a birth date" do
         expect(agent.birthdate).to eql '1830'
       end

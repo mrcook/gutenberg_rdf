@@ -7,6 +7,10 @@ module GutenbergRdf
         @xml = xml
       end
 
+      def to_s
+        fullname
+      end
+
       def id
         xml.elements['pgterms:agent'].attributes['about'].match(/\A\d\d\d\d\/agents\/(\d+)\z/)[1]
       end
