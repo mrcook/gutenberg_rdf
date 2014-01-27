@@ -158,14 +158,15 @@ module GutenbergRdf
       end
       let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
 
-      it "expects a Array" do
-        expect(rdf.authors.class).to be Array
-      end
-      it "expects correct number to be returned" do
+      it "returns the correct number of authors" do
         expect(rdf.authors.count).to be 2
       end
       it "expects an author object" do
         expect(rdf.authors.first.class).to be Rdf::Agent
+      end
+      it "has the correct author names" do
+        expect(rdf.authors.first.fullname).to eq 'Mary Mapes Dodge'
+        expect(rdf.authors.last.fullname).to eq 'Various'
       end
     end
 

@@ -87,7 +87,7 @@ module GutenbergRdf
     def extract_authors
       entries = Array.new
       xml.elements.each('pgterms:agent') do |agent|
-        entries << Agent.new(agent.root)
+        entries << Agent.new(agent)
       end
       entries
     end

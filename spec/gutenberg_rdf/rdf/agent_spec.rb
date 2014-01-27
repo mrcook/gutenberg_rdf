@@ -14,8 +14,7 @@ module GutenbergRdf
                   <pgterms:webpage rdf:resource="http://en.wikipedia.org/wiki/Jon_James_Doe"/>
                 </pgterms:agent>
               </rdf:RDF>'
-        rdf = REXML::Document.new(xml)
-        Agent.new(rdf.root)
+        Agent.new(REXML::Document.new(xml).root.elements['pgterms:agent'])
       end
 
       it "expects an agent ID" do
@@ -62,8 +61,7 @@ module GutenbergRdf
                      <pgterms:name>Dato</pgterms:name>
                    </pgterms:agent>
                  </rdf:RDF>'
-          rdf = REXML::Document.new(xml)
-          Agent.new(rdf.root)
+          Agent.new(REXML::Document.new(xml).root.elements['pgterms:agent'])
         end
 
         it "expects it to be assigned to the last name" do
@@ -81,8 +79,7 @@ module GutenbergRdf
                      <pgterms:name>Doe, Jon, Sir</pgterms:name>
                    </pgterms:agent>
                  </rdf:RDF>'
-          rdf = REXML::Document.new(xml)
-          Agent.new(rdf.root)
+          Agent.new(REXML::Document.new(xml).root.elements['pgterms:agent'])
         end
 
         it "expects the correct name order" do
@@ -98,8 +95,7 @@ module GutenbergRdf
                      <pgterms:name>Doe, J. J. (Jon James)</pgterms:name>
                    </pgterms:agent>
                  </rdf:RDF>'
-          rdf = REXML::Document.new(xml)
-          Agent.new(rdf.root)
+          Agent.new(REXML::Document.new(xml).root.elements['pgterms:agent'])
         end
 
         it "expects initials to replaced by name in brackets" do

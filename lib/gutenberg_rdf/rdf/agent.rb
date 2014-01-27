@@ -12,11 +12,11 @@ module GutenbergRdf
       end
 
       def id
-        xml.elements['pgterms:agent'].attributes['about'].match(/\A\d\d\d\d\/agents\/(\d+)\z/)[1]
+        xml.attributes['about'].match(/\A\d\d\d\d\/agents\/(\d+)\z/)[1]
       end
 
       def fullname
-        [firstname, lastname].join(' ')
+        [firstname, lastname].reject(&:empty?).join(' ')
       end
 
       def lastname
@@ -28,20 +28,20 @@ module GutenbergRdf
       end
 
       def birthdate
-        xml.elements['pgterms:agent/pgterms:birthdate'].text
+        xml.elements['pgterms:birthdate'].text
       end
 
       def deathdate
-        xml.elements['pgterms:agent/pgterms:deathdate'].text
+        xml.elements['pgterms:deathdate'].text
       end
 
       def webpage
-        xml.elements['pgterms:agent/pgterms:webpage'].attributes['resource']
+        xml.elements['pgterms:webpage'].attributes['resource']
       end
 
       def aliases
         entries = Array.new
-        xml.elements.each('pgterms:agent/pgterms:alias') do |name|
+        xml.elements.each('pgterms:alias') do |name|
           entries << name.text
         end
         entries
@@ -50,7 +50,7 @@ module GutenbergRdf
     private
 
       def name_parts
-        parts = xml.elements['pgterms:agent/pgterms:name'].text.split(/, */)
+        parts = xml.elements['pgterms:name'].text.split(/, */)
         last  = parts.shift
         first = parts.reverse.join(' ')
 
