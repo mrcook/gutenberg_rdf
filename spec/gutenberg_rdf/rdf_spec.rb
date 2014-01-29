@@ -86,6 +86,24 @@ module GutenbergRdf
         end
       end
 
+      context "with; title, or, subtitle (we need to split on the 'or')" do
+        let(:xml) do
+          '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+            <pgterms:ebook rdf:about="ebooks/98765">
+              <dcterms:title>A Great Multi-Title, or, a Subtitle</dcterms:title>
+            </pgterms:ebook>
+          </rdf:RDF>'
+        end
+        let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
+
+        it "expects the title to be the first line" do
+          expect(rdf.title).to eql 'A Great Multi-Title'
+        end
+        it "expects the subtitle to be the second line" do
+          expect(rdf.subtitle).to eql 'a Subtitle'
+        end
+      end
+
       context "when title:subtitle are separated by a colon" do
         let(:xml) do
           '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">

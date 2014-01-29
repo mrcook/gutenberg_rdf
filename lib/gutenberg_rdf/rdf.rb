@@ -80,8 +80,9 @@ module GutenbergRdf
       title_array = t.split(/\n/)
       title_array = title_array.first.split(/:/) if title_array.count == 1
       title_array = title_array.first.split(/;/) if title_array.count == 1
+      title_array = title_array.first.split(/, or,/) if title_array.count == 1
 
-      title_array.each(&:strip!)
+      title_array.map(&:strip)
     end
 
     def extract_authors
