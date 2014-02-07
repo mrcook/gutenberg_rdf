@@ -85,10 +85,27 @@ module GutenbergRdf
       title_array.map(&:strip)
     end
 
+    def roles
+      @roles ||= extract_roles
+    end
+
+    def extract_roles
+      entries = Hash.new
+      xml.elements.each('pgterms:ebook/dcterms:creator') do |entry|
+        entries["#{entry.attributes['rdf:resource'].sub('2009/agents/', '')}"] = 'aut'
+      end
+      xml.elements.each('pgterms:ebook/marcrel:*') do |entry|
+        entries["#{entry.attributes['rdf:resource'].sub('2009/agents/', '')}"] = entry.name
+      end
+      entries
+    end
+
     def extract_authors
       entries = Array.new
       xml.elements.each('pgterms:agent') do |agent|
-        entries << Agent.new(agent)
+        a = Agent.new(agent)
+        a.assign_role(roles)
+        entries << a
       end
       entries
     end

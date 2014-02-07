@@ -160,7 +160,11 @@ module GutenbergRdf
 
     describe "#authors" do
       let(:xml) do
-        '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+        '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:marcrel="http://id.loc.gov/vocabulary/relators">
+          <pgterms:ebook rdf:about="ebooks/99999999">
+            <marcrel:ctb rdf:resource="2009/agents/402"/>
+            <dcterms:creator rdf:resource="2009/agents/116"/>
+          </pgterms:ebook>
           <pgterms:agent rdf:about="2009/agents/402">
             <pgterms:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1830</pgterms:birthdate>
             <pgterms:deathdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1905</pgterms:deathdate>
@@ -184,7 +188,12 @@ module GutenbergRdf
       end
       it "has the correct author names" do
         expect(rdf.authors.first.fullname).to eq 'Mary Mapes Dodge'
-        expect(rdf.authors.last.fullname).to eq 'Various'
+      end
+      it "expects the author to have an aut role" do
+        expect(rdf.authors.last.role).to eq 'aut'
+      end
+      it "expects other agents to have the correct role" do
+        expect(rdf.authors.first.role).to eq 'ctb'
       end
     end
 

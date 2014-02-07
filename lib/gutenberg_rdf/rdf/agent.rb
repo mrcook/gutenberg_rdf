@@ -2,6 +2,7 @@ module GutenbergRdf
   class Rdf
     class Agent
       attr_reader :xml
+      attr_accessor :role
 
       def initialize(xml)
         @xml = xml
@@ -13,6 +14,14 @@ module GutenbergRdf
 
       def id
         xml.attributes['about'].match(/\A\d\d\d\d\/agents\/(\d+)\z/)[1]
+      end
+
+      def role
+        @role ||= 'oth'
+      end
+
+      def assign_role(roles)
+        self.role = roles["#{id}"]
       end
 
       def fullname
