@@ -1,11 +1,18 @@
 # Gutenberg RDF
 
 Gutenberg RDF is a Ruby wrapper for the Project Gutenberg RDF catalog book files,
-providing a nice API to all the metadata contained within.
+providing an API to all the metadata contained within.
+
+The official RDF catalog can be found here: http://www.gutenberg.org/wiki/Gutenberg:Feeds
+
 
 ## Requirements
 
-*  Ruby 2.0 - this is so we get UTF-8 by default
+* Ruby 2.0 - this is so we get UTF-8 by default
+
+NOTE: In around April 2014 PG changed the XML format in their RDF files
+considerably, so this GEM will no longer work on files from before that date.
+Please make sure to download the latest catalog using the link above.
 
 
 ## Installation

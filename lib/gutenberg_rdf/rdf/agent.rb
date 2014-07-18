@@ -20,10 +20,6 @@ module GutenbergRdf
         @role ||= 'oth'
       end
 
-      def assign_role(roles)
-        self.role = roles["#{id}"]
-      end
-
       def fullname
         [firstname, lastname].reject(&:empty?).join(' ')
       end

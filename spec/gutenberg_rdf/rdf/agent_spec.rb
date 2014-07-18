@@ -3,18 +3,24 @@ require 'spec_helper'
 module GutenbergRdf
   class Rdf
     describe Agent do
+      let(:xml) do
+        '<rdf:RDF xml:base="http://www.gutenberg.org/" xmlns:cc="http://web.resource.org/cc/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcam="http://purl.org/dc/dcam/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:marcrel="http://id.loc.gov/vocabulary/relators/">
+           <pgterms:ebook rdf:about="ebooks/99999999">
+             <dcterms:creator>
+               <pgterms:agent rdf:about="2009/agents/402">
+                 <pgterms:deathdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1905</pgterms:deathdate>
+                 <pgterms:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1830</pgterms:birthdate>
+                 <pgterms:name>Doe, Jon James</pgterms:name>
+                 <pgterms:alias>Doe, Jon</pgterms:alias>
+                 <pgterms:alias>Doe, J. J.</pgterms:alias>
+                 <pgterms:webpage rdf:resource="http://en.wikipedia.org/wiki/Jon_James_Doe"/>
+               </pgterms:agent>
+             </dcterms:creator>
+           </pgterms:ebook>
+         </rdf:RDF>'
+      end
       let(:agent) do
-        xml = '<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-                 <pgterms:agent rdf:about="2009/agents/402">
-                   <pgterms:birthdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1830</pgterms:birthdate>
-                   <pgterms:deathdate rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1905</pgterms:deathdate>
-                   <pgterms:name>Doe, Jon James</pgterms:name>
-                   <pgterms:alias>Doe, Jon</pgterms:alias>
-                   <pgterms:alias>Doe, J. J.</pgterms:alias>
-                   <pgterms:webpage rdf:resource="http://en.wikipedia.org/wiki/Jon_James_Doe"/>
-                 </pgterms:agent>
-               </rdf:RDF>'
-        Agent.new(REXML::Document.new(xml).root.elements['pgterms:agent'])
+        Agent.new(REXML::Document.new(xml).root.elements['pgterms:ebook/dcterms:creator/pgterms:agent'])
       end
 
       it "expects an agent ID" do
@@ -23,15 +29,6 @@ module GutenbergRdf
 
       it "sets a default role" do
         expect(agent.role).to eq 'oth'
-      end
-
-      describe "Assigning Roles" do
-        it "assigns the correct value to .role" do
-          roles = {'402' => 'aut', '116' => 'ctb'}
-          agent.assign_role(roles)
-
-          expect(agent.role).to eq 'aut'
-        end
       end
 
       it "expects the last name" do

@@ -48,7 +48,7 @@ module GutenbergRdf
     end
 
     def language
-      xml.elements['pgterms:ebook/dcterms:language'].text
+      xml.elements['pgterms:ebook/dcterms:language/rdf:Description/rdf:value'].text
     end
 
     def rights
@@ -56,13 +56,14 @@ module GutenbergRdf
     end
 
     def covers
-      official_cover_images.concat(other_cover_images).sort.uniq
+      official_cover_images.concat(other_cover_images).uniq
     end
 
     def ebooks
       files = Array.new
-      xml.elements.each('pgterms:file') do |file|
-        files << Media.new(file)
+      xml.elements.each('pgterms:ebook/dcterms:hasFormat') do |format|
+        file = format.elements['pgterms:file']
+        files << Media.new(file) if file.elements['dcterms:format/rdf:Description/rdf:value'].text.match(/\Atext|\Aapplication/)
       end
       files
     end
@@ -85,37 +86,28 @@ module GutenbergRdf
       title_array.map(&:strip)
     end
 
-    def roles
-      @roles ||= extract_roles
-    end
-
-    def extract_roles
-      entries = Hash.new
-      xml.elements.each('pgterms:ebook/dcterms:creator') do |entry|
-        entries["#{entry.attributes['rdf:resource'].sub('2009/agents/', '')}"] = 'aut'
-      end
-      xml.elements.each('pgterms:ebook/marcrel:*') do |entry|
-        entries["#{entry.attributes['rdf:resource'].sub('2009/agents/', '')}"] = entry.name
-      end
-      entries
-    end
-
     def extract_authors
-      entries = Array.new
-      xml.elements.each('pgterms:agent') do |agent|
-        entry = Agent.new(agent)
-        entry.assign_role(roles)
-        entries << entry
+      agents = Array.new
+      xml.elements.each('pgterms:ebook/dcterms:creator') do |contributor|
+        agent = Agent.new(contributor.elements['pgterms:agent'])
+        agent.role = 'aut'
+        agents << agent
       end
-      entries
+      xml.elements.each('pgterms:ebook/marcrel:*') do |contributor|
+        agent = Agent.new(contributor.elements['pgterms:agent'])
+        agent.role = contributor.name
+        agents << agent
+      end
+      agents
     end
 
     def official_cover_images
       entries = Array.new
-      xml.elements.each('pgterms:file') do |file|
+      xml.elements.each('pgterms:ebook/dcterms:hasFormat') do |format|
+        file = format.elements['pgterms:file']
         entries << file.attributes['about'] if file_is_image?(file)
       end
-      entries
+      entries.sort
     end
 
     def file_is_image?(node)
@@ -132,7 +124,7 @@ module GutenbergRdf
         cover.sub!(/\Afile:\/\/\/public\/vhost\/g\/gutenberg\/html/, 'http://www.gutenberg.org')
         entries << cover
       end
-      entries
+      entries.sort
     end
 
   end
