@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path(File.dirname(__FILE__) + '/../lib')
+
+require "gutenberg_rdf"
+
+unless ARGV.last && File.exist?(ARGV.last)
+  puts
+  puts "ERROR: Please provide the full path to an RDF file:\n\n$ bin/rdf /gutenberg/pg1.rdf"
+  puts
+  exit 1
+end
+
+rdf = GutenbergRdf.parse(ARGV.last)
+
+puts "       ID: #{rdf.id}"
+puts "     Type: #{rdf.type}"
+puts "    Title: #{rdf.title}"
+puts " Subtitle: #{rdf.subtitle}"
+puts "Published: #{rdf.published}"
+puts " Language: #{rdf.language}"
+puts "   Rights: #{rdf.rights}"
+puts "Bookcover: #{rdf.covers.first}"
+puts "   eBooks: \n#{rdf.ebooks.map{|b| "           #{b.uri}" }.join("\n")}"
+puts " Subjects: \n           #{rdf.subjects.join("\n           ")}"
