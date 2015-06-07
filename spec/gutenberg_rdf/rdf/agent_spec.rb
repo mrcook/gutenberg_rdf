@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module GutenbergRdf
   class Rdf
-    describe Agent do
+    RSpec.describe Agent do
       let(:xml) do
         '<rdf:RDF xml:base="http://www.gutenberg.org/" xmlns:cc="http://web.resource.org/cc/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcam="http://purl.org/dc/dcam/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:marcrel="http://id.loc.gov/vocabulary/relators/">
            <pgterms:ebook rdf:about="ebooks/99999999">

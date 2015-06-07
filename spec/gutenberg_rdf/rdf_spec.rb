@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module GutenbergRdf
-  describe Rdf do
+  RSpec.describe Rdf do
 
     describe "basic metadata" do
       let(:xml) do
