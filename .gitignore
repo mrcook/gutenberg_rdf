@@ -18,3 +18,5 @@ tmp
 
 .ruby-*
 .DS_Store
+
+.idea
