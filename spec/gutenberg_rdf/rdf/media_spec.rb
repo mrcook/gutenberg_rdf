@@ -24,19 +24,19 @@ module GutenbergRdf
       end
       let(:media) { Media.new(REXML::Document.new(xml).elements['rdf:RDF/pgterms:ebook/dcterms:hasFormat/pgterms:file']) }
 
-      it "expects the file URI" do
+      it 'expects the file URI' do
         expect(media.uri).to eql 'http://www.gutenberg.org/ebooks/98765.txt.utf-8'
       end
-      it "expects the file media type" do
+      it 'expects the file media type' do
         expect(media.media_type).to eql 'text/plain'
       end
-      it "expects the file encoding" do
+      it 'expects the file encoding' do
         expect(media.encoding).to eql 'utf-8'
       end
-      it "expects modified to be a DateTime" do
+      it 'expects modified to be a DateTime' do
         expect(media.modified.class).to be DateTime
       end
-      it "should return the modified datetime" do
+      it 'should return the modified datetime' do
         expect(media.modified.to_s).to eql '2010-02-16T08:29:52-07:00'
       end
     end

@@ -23,7 +23,7 @@ module GutenbergRdf
         DateTime.parse(xml.elements['dcterms:modified'].text + '-07:00')
       end
 
-    private
+      private
 
       def datatype
         parts = xml.elements['dcterms:format/rdf:Description/rdf:value'].text.split(/; */)
@@ -31,7 +31,6 @@ module GutenbergRdf
         e = parts.join(';').sub('charset=', '')
         {type: t, encoding: e}
       end
-
     end
   end
 end

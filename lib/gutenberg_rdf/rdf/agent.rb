@@ -52,7 +52,7 @@ module GutenbergRdf
         entries
       end
 
-    private
+      private
 
       def name_parts
         parts = xml.elements['pgterms:name'].text.split(/, */)
@@ -61,7 +61,6 @@ module GutenbergRdf
 
         {first: first, last: last}
       end
-
     end
   end
 end

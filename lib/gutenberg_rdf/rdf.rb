@@ -68,7 +68,7 @@ module GutenbergRdf
       files
     end
 
-  private
+    private
 
     def titles
       @titles ||= split_title_and_subtitle
@@ -126,6 +126,5 @@ module GutenbergRdf
       end
       entries.sort
     end
-
   end
 end
