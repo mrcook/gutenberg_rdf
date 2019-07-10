@@ -8,19 +8,22 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Michael R. Cook"]
   spec.email         = ["git@mrcook.uk"]
 
-  spec.summary       = %q{A Ruby wrapper for the Project Gutenberg RDF catalog files.}
-  spec.description   = %q{A Ruby wrapper for the Project Gutenberg RDF catalog files (requires Ruby 2).}
+  spec.summary       = %q{Read Project Gutenberg RDF catalog files.}
+  spec.description   = %q{A Ruby wrapper for the Project Gutenberg RDF catalog files.}
   spec.homepage      = "https://github.com/mrcook/gutenberg_rdf"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+  # Specify which files should be added to the gem when it is released.
+  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
+  spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
+    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.bindir        = "bin"
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.0.0" # so we have UTF-8 by default
+  spec.required_ruby_version = ">= 2.0.0" # UTF-8 is required
 
-  spec.add_development_dependency "rspec", ">= 3.4.0"
+  # spec.add_development_dependency "bundler", "~> 2.0"
+  spec.add_development_dependency "rspec", "~> 3.5", ">= 3.5.0"
 end
