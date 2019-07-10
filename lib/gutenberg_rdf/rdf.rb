@@ -2,6 +2,8 @@ require 'date'
 
 module GutenbergRdf
   class Rdf
+    extend Gem::Deprecate
+
     attr_reader :xml
 
     def initialize(xml)
@@ -48,7 +50,17 @@ module GutenbergRdf
     end
 
     def language
-      xml.elements['pgterms:ebook/dcterms:language/rdf:Description/rdf:value'].text
+      # xml.elements['pgterms:ebook/dcterms:language/rdf:Description/rdf:value'].text
+      languages.first
+    end
+    deprecate :language, :languages, 2020, 7
+
+    def languages
+      langs = []
+      xml.elements.each('pgterms:ebook/dcterms:language') do |language|
+        langs << language.elements['rdf:Description/rdf:value'].text
+      end
+      langs
     end
 
     def rights

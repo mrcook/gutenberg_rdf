@@ -36,6 +36,52 @@ module GutenbergRdf
       end
     end
 
+    describe '#languages' do
+      let(:languages) do
+        '<dcterms:language>
+          <rdf:Description rdf:nodeID="N88989dfs7984987df987cvcsd876ew79">
+            <rdf:value rdf:datatype="http://purl.org/dc/terms/RFC4646">en</rdf:value>
+          </rdf:Description>
+        </dcterms:language>'
+      end
+      let(:xml) do
+        <<-RDFXML
+         <rdf:RDF xml:base="http://www.gutenberg.org/" xmlns:cc="http://web.resource.org/cc/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcam="http://purl.org/dc/dcam/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+           <pgterms:ebook rdf:about="ebooks/98765">
+             <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2006-09-28</dcterms:issued>
+             #{languages}
+             <dcterms:publisher>Project Gutenberg</dcterms:publisher>
+             <dcterms:rights>Public domain in the USA.</dcterms:rights>
+           </pgterms:ebook>
+         </rdf:RDF>
+        RDFXML
+      end
+      let(:rdf) { Rdf.new(REXML::Document.new(xml)) }
+
+      it 'expects only one entry' do
+        expect(rdf.languages).to eq ['en']
+      end
+
+      context 'with multiple languages' do
+        let(:languages) do
+          '<dcterms:language>
+            <rdf:Description rdf:nodeID="N3dbe0be20a8648afbca93d7b9dd4e230">
+              <rdf:value rdf:datatype="http://purl.org/dc/terms/RFC4646">en</rdf:value>
+            </rdf:Description>
+          </dcterms:language>
+          <dcterms:language>
+            <rdf:Description rdf:nodeID="N61382b9bd34f435794c3995b9e665b3c">
+              <rdf:value rdf:datatype="http://purl.org/dc/terms/RFC4646">it</rdf:value>
+            </rdf:Description>
+          </dcterms:language>'
+        end
+
+        it 'expects all languages to be returned' do
+          expect(rdf.languages).to eq ['en', 'it']
+        end
+      end
+    end
+
     describe '#type' do
       let(:xml) do
         '<rdf:RDF xml:base="http://www.gutenberg.org/" xmlns:cc="http://web.resource.org/cc/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcam="http://purl.org/dc/dcam/" xmlns:pgterms="http://www.gutenberg.org/2009/pgterms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
